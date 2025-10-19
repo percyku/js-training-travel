@@ -1,38 +1,44 @@
-let jsonData = [
-  {
-    image:
-      "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_1.png?raw=true",
-    location: "高雄",
-    rank: 10,
-    title: "綠島自由行套裝行程",
-    desc: "嚴選超高CP值綠島自由行套裝行程，多種綠島套裝組合。",
-    price: 1400,
-    leave: 87,
-  },
-  {
-    image:
-      "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_4.png?raw=true",
-    location: "台北",
-    rank: 2,
-    title: "清境高空觀景步道",
-    desc: "清境農場青青草原數十公頃碧草，這些景觀豐沛了清境觀景步道的風格，也涵養它無可取代的特色。",
-    price: 240,
-    leave: 99,
-  },
-  {
-    image:
-      "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_3.png?raw=true",
-    location: "台中",
-    rank: 7,
-    title: "山林悠遊套票",
-    desc: "山林悠遊套票，結合南投清境高空步道、雙龍瀑布七彩吊橋、瑞龍瀑布園區之熱門景點。",
-    price: 1765,
-    leave: 20,
-  },
-];
+// let jsonData = [
+// {
+//   id:1,
+//   imgUrl:
+//     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_1.png?raw=true",
+//   area: "高雄",
+//   rate: 10,
+//   name: "綠島自由行套裝行程",
+//   description: "嚴選超高CP值綠島自由行套裝行程，多種綠島套裝組合。",
+//   price: 1400,
+//   group: 87,
+// },
+// {
+//   id:2,
+//   imgUrl:
+//     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_4.png?raw=true",
+//   area: "台北",
+//   rate: 2,
+//   name: "清境高空觀景步道",
+//   description: "清境農場青青草原數十公頃碧草，這些景觀豐沛了清境觀景步道的風格，也涵養它無可取代的特色。",
+//   price: 240,
+//   group: 99,
+// },
+// {
+//   id:3,
+//   imgUrl:
+//     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_3.png?raw=true",
+//   area: "台中",
+//   rate: 7,
+//   name: "山林悠遊套票",
+//   description: "山林悠遊套票，結合南投清境高空步道、雙龍瀑布七彩吊橋、瑞龍瀑布園區之熱門景點。",
+//   price: 1765,
+//   group: 20,
+// },
+// ];
 
-let locationData = ["台北", "台中", "高雄"];
+let jsonData = "";
+let areaData = ["台北", "台中", "高雄", "花蓮"];
+
 // console.log(jsonData);
+//
 
 const ticketName = document.querySelector("#ticketName");
 const ticketNameMessage = document.querySelector("#ticketName-message");
@@ -63,71 +69,69 @@ addTicketBtn.addEventListener("click", (e) => {
   clearAlertMsg();
   if (checkItem()) {
     let obj = {
-      image: ticketImgUrl.value,
-      location: ticketRegion.value,
-      rank:
-        ticketRate.value === "10"
-          ? parseInt(ticketRate.value)
-          : parseFloat(ticketRate.value.match(/^\d+(\.\d{0,1})?/)[0]),
-      title: ticketName.value,
-      desc: ticketDescription.value,
+      id: Date.now(),
+      imgUrl: ticketImgUrl.value,
+      area: ticketRegion.value,
+      rate: Number.isInteger(ticketRate.value)
+        ? parseInt(ticketRate.value)
+        : parseFloat(ticketRate.value.match(/^\d+(\.\d{0,1})?/)[0]),
+      name: ticketName.value,
+      description: ticketDescription.value,
       price: parseInt(ticketPrice.value),
-      leave: parseInt(ticketNum.value),
+      group: parseInt(ticketNum.value),
     };
 
     jsonData.push(obj);
-    initialItem();
-    init(jsonData, "initial");
+    document.querySelector(".addTicket-form").reset();
+    renderData(jsonData);
   }
 });
 
 const contextList = document.querySelector(".ticketCard-area");
+const cantFindArea = document.querySelector(".cantFind-area");
 const regionSearch = document.querySelector(".regionSearch");
 const searchResultText = document.querySelector("#searchResult-text");
 regionSearch.addEventListener("change", (e) => {
   e.preventDefault();
   let filterString = e.target.value;
 
-  let data = jsonData.filter((item) => {
-    if (filterString === "") {
-      return item;
-    } else if (filterString === item.location) {
-      return item;
-    }
-  });
+  let data = jsonData.filter(
+    (item) => filterString === "" || filterString === item.area
+  );
 
-  init(data);
+  renderData(data);
 });
 
-function init(data, initial) {
-  //   console.log(data);
-
-  let str = "";
-  data.forEach((item) => {
-    str += ` <li class="ticketCard">
+function renderData(data) {
+  console.log(data);
+  searchResultText.textContent = `本次搜尋共 ${data.length} 筆資料`;
+  if (data.length > 0) {
+    let str = "";
+    data.forEach((item) => {
+      str += ` <li class="ticketCard">
           <div class="ticketCard-img">
             <a href="#">
               <img
-                src="${item.image}"
+                src="${item.imgUrl}"
                 alt=""
               />
             </a>
-            <div class="ticketCard-region">${item.location}</div>
-            <div class="ticketCard-rank">${item.rank}</div>
+            <div class="ticketCard-region">${item.area}</div>
+            <div class="ticketCard-rank">${item.rate}</div>
           </div>
           <div class="ticketCard-content">
             <div>
               <h3>
-                <a href="#" class="ticketCard-name">${item.title}</a>
+                <a href="#" class="ticketCard-name">${item.name}</a>
               </h3>
               <p class="ticketCard-description">
-                ${item.desc}
+                ${item.description}
               </p>
             </div>
             <div class="ticketCard-info">
               <p class="ticketCard-num">
                 <span><i class="fas fa-exclamation-circle"></i></span>
-                剩下最後 <span id="ticketCard-num"> ${item.leave} </span> 組
+                剩下最後 <span id="ticketCard-num"> ${item.group} </span> 組
               </p>
               <p class="ticketCard-price">
                 TWD <span id="ticketCard-price">$${item.price}</span>
@@ -135,21 +139,25 @@ function init(data, initial) {
             </div>
           </div>
         </li>`;
-  });
-  contextList.innerHTML = str;
-
-  if (initial === "initial") {
-    let str1 = `<option value="地區搜尋" disabled selected hidden>地區搜尋</option> <option value="">全部地區</option>`;
-    let str2 = ` <option value="" disabled selected hidden>請選擇景點地區</option>`;
-    locationData.forEach((item) => {
-      str1 += ` <option value="${item}">${item}</option>`;
-      str2 += ` <option value="${item}">${item}</option>`;
     });
-    regionSearch.innerHTML = str1;
-    ticketRegion.innerHTML = str2;
+    contextList.innerHTML = str;
+    cantFindArea.style = "display:none";
+  } else {
+    console.log("123");
+    contextList.innerHTML = "";
+    cantFindArea.style = "display:block";
   }
+}
 
-  searchResultText.textContent = `本次搜尋共 ${data.length} 筆資料`;
+function renderSelector() {
+  let str1 = `<option value="地區搜尋" disabled selected hidden>地區搜尋</option> <option value="">全部地區</option>`;
+  let str2 = ` <option value="" disabled selected hidden>請選擇景點地區</option>`;
+  areaData.forEach((item) => {
+    str1 += ` <option value="${item}">${item}</option>`;
+    str2 += ` <option value="${item}">${item}</option>`;
+  });
+  regionSearch.innerHTML = str1;
+  ticketRegion.innerHTML = str2;
 }
 
 function clearAlertMsg() {
@@ -162,39 +170,29 @@ function clearAlertMsg() {
   ticketDescriptionMessage.innerHTML = "";
 }
 
-function initialItem() {
-  ticketName.value = "";
-  ticketImgUrl.value = "";
-  ticketRegion.value = "";
-  ticketPrice.value = "";
-  ticketNum.value = "";
-  ticketRate.value = "";
-  ticketDescription.value = "";
-}
-
 function checkItem() {
-  const alertStr1 = `<i class="fas fa-exclamation-circle"></i><span>必填!</span>`;
-  const alertStr2 = `<i class="fas fa-exclamation-circle"></i><span>必填數字!</span>`;
+  const requiredAlert1 = `<i class="fas fa-exclamation-circle"></i><span>必填!</span>`;
+  const requiredAlert2 = `<i class="fas fa-exclamation-circle"></i><span>必填數字!</span>`;
 
   let res = true;
   if (ticketName.value.trim().length == 0) {
-    ticketNameMessage.innerHTML = alertStr1;
+    ticketNameMessage.innerHTML = requiredAlert1;
     res = false;
   }
 
   if (ticketImgUrl.value.trim().length == 0) {
-    ticketImgUrlMessage.innerHTML = alertStr1;
+    ticketImgUrlMessage.innerHTML = requiredAlert1;
     res = false;
   }
 
   if (ticketRegion.value.length == 0) {
-    ticketRegionMessage.innerHTML = alertStr2;
+    ticketRegionMessage.innerHTML = requiredAlert2;
     res = false;
   }
 
   let num = parseInt(ticketPrice.value);
-  if (typeof num !== "number" || isNaN(num)) {
-    ticketPriceMessage.innerHTML = alertStr2;
+  if (isNaN(num)) {
+    ticketPriceMessage.innerHTML = requiredAlert2;
     res = false;
   } else if (num < 0) {
     ticketPriceMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>不得小於0!</span>`;
@@ -202,8 +200,8 @@ function checkItem() {
   }
 
   num = parseInt(ticketNum.value);
-  if (typeof num !== "number" || isNaN(num)) {
-    ticketNumMessage.innerHTML = alertStr2;
+  if (isNaN(num)) {
+    ticketNumMessage.innerHTML = requiredAlert2;
     res = false;
   } else if (num < 1) {
     ticketNumMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>不得小於1!</span>`;
@@ -211,7 +209,7 @@ function checkItem() {
   }
 
   num = parseFloat(ticketRate.value);
-  if (typeof num !== "number" || isNaN(num)) {
+  if (isNaN(num)) {
     ticketRateMessage.innerHTML = alertStr2;
     res = false;
   } else if (num < 1 || num > 10) {
@@ -220,7 +218,7 @@ function checkItem() {
   }
 
   if (ticketDescription.value.trim().length == 0) {
-    ticketDescriptionMessage.innerHTML = alertStr1;
+    ticketDescriptionMessage.innerHTML = requiredAlert1;
     res = false;
   } else if (ticketDescription.value.trim().length > 100) {
     ticketDescriptionMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>限 100 字!</span>`;
@@ -230,4 +228,22 @@ function checkItem() {
   return res;
 }
 
-init(jsonData, "initial");
+function init() {
+  renderSelector();
+
+  axios
+    .get(
+      "https://raw.githubusercontent.com/hexschool/js-training/main/travelApi.json"
+    )
+    .then((res) => {
+      console.log(res.data["data"]);
+      jsonData = res.data["data"];
+      renderData(jsonData);
+    })
+    .catch((error) => {
+      console.log(error);
+      alert("this is error msg:" + error);
+    });
+}
+
+init();
