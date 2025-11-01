@@ -1,45 +1,56 @@
-// let jsonData = [
-// {
-//   id:1,
-//   imgUrl:
-//     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_1.png?raw=true",
-//   area: "高雄",
-//   rate: 10,
-//   name: "綠島自由行套裝行程",
-//   description: "嚴選超高CP值綠島自由行套裝行程，多種綠島套裝組合。",
-//   price: 1400,
-//   group: 87,
-// },
-// {
-//   id:2,
-//   imgUrl:
-//     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_4.png?raw=true",
-//   area: "台北",
-//   rate: 2,
-//   name: "清境高空觀景步道",
-//   description: "清境農場青青草原數十公頃碧草，這些景觀豐沛了清境觀景步道的風格，也涵養它無可取代的特色。",
-//   price: 240,
-//   group: 99,
-// },
-// {
-//   id:3,
-//   imgUrl:
-//     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_3.png?raw=true",
-//   area: "台中",
-//   rate: 7,
-//   name: "山林悠遊套票",
-//   description: "山林悠遊套票，結合南投清境高空步道、雙龍瀑布七彩吊橋、瑞龍瀑布園區之熱門景點。",
-//   price: 1765,
-//   group: 20,
-// },
-// ];
+let jsonData = [
+  // {
+  //   id: 1,
+  //   imgUrl:
+  //     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_1.png?raw=true",
+  //   area: "高雄",
+  //   rate: 10,
+  //   name: "綠島自由行套裝行程",
+  //   description: "嚴選超高CP值綠島自由行套裝行程，多種綠島套裝組合。",
+  //   price: 1400,
+  //   group: 87,
+  // },
+  // {
+  //   id: 2,
+  //   imgUrl:
+  //     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_4.png?raw=true",
+  //   area: "台北",
+  //   rate: 2,
+  //   name: "清境高空觀景步道",
+  //   description:
+  //     "清境農場青青草原數十公頃碧草，這些景觀豐沛了清境觀景步道的風格，也涵養它無可取代的特色。",
+  //   price: 240,
+  //   group: 99,
+  // },
+  // {
+  //   id: 3,
+  //   imgUrl:
+  //     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_3.png?raw=true",
+  //   area: "台中",
+  //   rate: 7,
+  //   name: "山林悠遊套票",
+  //   description:
+  //     "山林悠遊套票，結合南投清境高空步道、雙龍瀑布七彩吊橋、瑞龍瀑布園區之熱門景點。",
+  //   price: 1765,
+  //   group: 20,
+  // },
+  // {
+  //   id: 4,
+  //   imgUrl:
+  //     "https://github.com/hexschool/2022-web-layout-training/blob/main/js_week5/travel_3.png?raw=true",
+  //   area: "高雄",
+  //   rate: 7,
+  //   name: "山林悠遊套票",
+  //   description:
+  //     "山林悠遊套票，結合南投清境高空步道、雙龍瀑布七彩吊橋、瑞龍瀑布園區之熱門景點。",
+  //   price: 1765,
+  //   group: 20,
+  // },
+];
 
-let jsonData = "";
 let areaData = ["台北", "台中", "高雄", "花蓮"];
 
-// console.log(jsonData);
-//
-
+const addTicketForm = document.querySelector(".addTicket-form");
 const ticketName = document.querySelector("#ticketName");
 const ticketNameMessage = document.querySelector("#ticketName-message");
 
@@ -82,13 +93,16 @@ addTicketBtn.addEventListener("click", (e) => {
     };
 
     jsonData.push(obj);
-    document.querySelector(".addTicket-form").reset();
-    renderData(jsonData);
+    addTicketForm.reset();
+    renderScenesAndCount(jsonData);
+    renderChart(jsonData);
   }
 });
 
 const contextList = document.querySelector(".ticketCard-area");
 const cantFindArea = document.querySelector(".cantFind-area");
+const donutChart = document.querySelector("#chart");
+
 const regionSearch = document.querySelector(".regionSearch");
 const searchResultText = document.querySelector("#searchResult-text");
 regionSearch.addEventListener("change", (e) => {
@@ -99,11 +113,23 @@ regionSearch.addEventListener("change", (e) => {
     (item) => filterString === "" || filterString === item.area
   );
 
-  renderData(data);
+  renderScenesAndCount(data);
+  renderChart(data);
 });
 
-function renderData(data) {
-  console.log(data);
+function renderSelector() {
+  let str1 = `<option value="地區搜尋" disabled selected hidden>地區搜尋</option> <option value="">全部地區</option>`;
+  let str2 = ` <option value="" disabled selected hidden>請選擇景點地區</option>`;
+  areaData.forEach((item) => {
+    str1 += ` <option value="${item}">${item}</option>`;
+    str2 += ` <option value="${item}">${item}</option>`;
+  });
+  regionSearch.innerHTML = str1;
+  ticketRegion.innerHTML = str2;
+}
+
+function renderScenesAndCount(data) {
+  // console.log(data);
   searchResultText.textContent = `本次搜尋共 ${data.length} 筆資料`;
   if (data.length > 0) {
     let str = "";
@@ -143,21 +169,68 @@ function renderData(data) {
     contextList.innerHTML = str;
     cantFindArea.style = "display:none";
   } else {
-    console.log("123");
     contextList.innerHTML = "";
     cantFindArea.style = "display:block";
   }
 }
 
-function renderSelector() {
-  let str1 = `<option value="地區搜尋" disabled selected hidden>地區搜尋</option> <option value="">全部地區</option>`;
-  let str2 = ` <option value="" disabled selected hidden>請選擇景點地區</option>`;
-  areaData.forEach((item) => {
-    str1 += ` <option value="${item}">${item}</option>`;
-    str2 += ` <option value="${item}">${item}</option>`;
+function renderChart(data) {
+  if (data.length === 0) {
+    donutChart.style = "display:none";
+    return;
+  } else {
+    donutChart.style = "display:block";
+  }
+
+  let totalNum = {};
+
+  data.forEach((item) => {
+    if (totalNum[item.area] === undefined) {
+      totalNum[item.area] = 1;
+    } else {
+      totalNum[item.area] += 1;
+    }
   });
-  regionSearch.innerHTML = str1;
-  ticketRegion.innerHTML = str2;
+  //#1
+  // const newData = [
+  //   // ["高雄", 2],
+  //   // ["台北", 1],
+  //   // ["台中", 2],
+  // ];
+
+  // for (const key in totalNum) {
+  //   let arr = [];
+  //   arr.push(key, totalNum[key]);
+  //   newData.push(arr);
+  // }
+
+  //#2
+  const newData = Object.entries(totalNum);
+
+  const chart = c3.generate({
+    bindto: "#chart",
+    size: {
+      width: 200,
+      heigth: 200,
+    },
+    data: {
+      columns: newData,
+      type: "donut",
+      colors: {
+        高雄: "#E68618",
+        台中: "#5151D3",
+        台北: "#26C0C7",
+        花蓮: "#c726b7ff",
+      },
+    },
+    donut: {
+      title: "套票地區比重",
+      width: 20,
+      label: {
+        show: false,
+      },
+    },
+  });
 }
 
 function clearAlertMsg() {
@@ -210,7 +283,7 @@ function checkItem() {
 
   num = parseFloat(ticketRate.value);
   if (isNaN(num)) {
-    ticketRateMessage.innerHTML = alertStr2;
+    ticketRateMessage.innerHTML = requiredAlert2;
     res = false;
   } else if (num < 1 || num > 10) {
     ticketRateMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>在1~10之間</span>`;
@@ -236,14 +309,17 @@ function init() {
       "https://raw.githubusercontent.com/hexschool/js-training/main/travelApi.json"
     )
     .then((res) => {
-      console.log(res.data["data"]);
+      //console.log(res.data["data"]);
       jsonData = res.data["data"];
-      renderData(jsonData);
+      renderScenesAndCount(jsonData);
+      renderChart(jsonData);
     })
     .catch((error) => {
       console.log(error);
-      alert("this is error msg:" + error);
+      // alert("this is error msg:" + error);
     });
+  // renderScenesAndCount(jsonData);
+  // renderChart(jsonData);
 }
 
 init();

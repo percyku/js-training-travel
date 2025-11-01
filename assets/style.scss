@@ -252,6 +252,10 @@ body {
   color: #818a91;
 }
 
+.search-area #chart {
+  margin-left: auto;
+}
+
 @media (max-width: 768px) {
   .search-area {
     -webkit-box-orient: vertical;
@@ -261,6 +265,10 @@ body {
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
+  }
+
+  .search-area #chart {
+    margin: 0 auto;
   }
 }
 
